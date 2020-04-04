@@ -1,5 +1,6 @@
 package com.nagappan.springwebsocket.configuration;
 
+import com.nagappan.springwebsocket.handler.AnalyticsHandler;
 import com.nagappan.springwebsocket.handler.MyMessageHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,10 +19,14 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
         return new MyMessageHandler();
     }
 
+    @Bean
+    public WebSocketHandler getAnalyticsHandler() { return new AnalyticsHandler(); }
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         System.out.println("websocket endpoint handler");
         registry.addHandler(myMessageHandler(), "/my-websocket-endpoint");
+        registry.addHandler(getAnalyticsHandler(), "/analytics-endpoint");
     }
 
 }

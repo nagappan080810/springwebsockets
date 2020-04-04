@@ -7,14 +7,13 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.ArrayList;
 
-public class MyMessageHandler extends TextWebSocketHandler {
+public class AnalyticsHandler extends TextWebSocketHandler {
 
-
-
+    private  ArrayList<TextMessage> messages = new ArrayList<>();
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // The WebSocket has been closed
-        System.out.println("web socket has been closed");
+        System.out.println("analytics web socket has been closed");
     }
 
     @Override
@@ -22,7 +21,7 @@ public class MyMessageHandler extends TextWebSocketHandler {
         // The WebSocket has been opened
         // I might save this session object so that I can send messages to it outside of this method
         // Let's send the first message
-        System.out.println("web socket connection established");
+        System.out.println("analytics web socket connection established");
         session.sendMessage(new TextMessage("You are now connected to the server. This is the first message."));
 
     }
@@ -30,7 +29,18 @@ public class MyMessageHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws Exception {
         // A message has been received
-        System.out.println("Message received: " + textMessage.getPayload());
+        System.out.println("Analytics Message received: " + textMessage.getPayload());
+        if (textMessage.getPayload().equals("get the mouse movement")) {
+            String concatenatedString = "";
+            System.out.println("messages size" + messages.size());
+            for (TextMessage msg: messages) {
+                System.out.println("concatenate.."+msg.getPayload());
+                concatenatedString += "|" + msg.getPayload();
+            }
+            session.sendMessage(new TextMessage(concatenatedString));
+        } else {
+            messages.add(textMessage);
+        }
     }
 
 }
